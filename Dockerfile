@@ -122,7 +122,14 @@ RUN set -x \
     && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7 \
     && apt-get install -yqq apt-transport-https ca-certificates \
     && sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger bionic main > /etc/apt/sources.list.d/passenger.list' \
-    && apt-get update && apt-get install -yqq nginx-extras passenger
+    && apt-get update && apt-get install -yqq nginx-extras passenger libnginx-mod-http-passenger; \
+	if [ ! -f /etc/nginx/modules-enabled/50-mod-http-passenger.conf ]; then \
+		ln -s /usr/share/nginx/modules-available/mod-http-passenger.load /etc/nginx/modules-enabled/50-mod-http-passenger.conf ; \
+	fi; \
+	ls /etc/nginx/conf.d/mod-http-passenger.conf;
+
+# custom nginx.conf
+COPY nginx.conf /etc/nginx/
 
 # install yarn
 ENV YARN_VERSION 1.19.1
